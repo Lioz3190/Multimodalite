@@ -9,6 +9,7 @@ import fr.dgac.ivy.Ivy;
 import fr.dgac.ivy.IvyClient;
 import fr.dgac.ivy.IvyException;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,6 +22,8 @@ public class GestureRecognizerIvy extends Ivy{
     private enum State {PRESS, RELEASE};
     
     private State state;
+    
+    private final TemplateRecognizer templateRecognizer = new TemplateRecognizer();
     
      public GestureRecognizerIvy() throws IvyException {
             super("GestureRecognizer","GestureRecognizer Ready",null);
@@ -125,4 +128,31 @@ public class GestureRecognizerIvy extends Ivy{
                 Logger.getLogger(GestureRecognizerIvy.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        
+        private void recognizeTemplate() {
+        double distance = 100000.;
+        Template recognized = new Template("Recognized", null);
+
+        for(Template t : templateRecognizer.getListeTemplates()) {
+            t.getStroke().normalize();
+            
+            double tempdistance = 100000.;
+            try {
+                tempdistance = t.normalization(this.getStroke());
+            } catch(IndexOutOfBoundsException ex) {}
+            
+            if(tempdistance < distance) {
+                distance = t.normalization(this.getStroke());
+                recognized = t; 
+            }
+        }
+
+        if(!recognized.getName().equals("Recognized")) {       
+            this.envoyerMessage(recognized.getName());
+        }
+    }
+    private void writeTemplate() throws IOException {
+        Template toAdd = new Template("circle", this.getStroke());
+        templateRecognizer.writeTemplate("circle.txt", toAdd);  
+    }
     }

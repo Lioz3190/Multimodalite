@@ -6,6 +6,7 @@
 package multimodalite;
 
 import GestureRecognizer.GestureRecognizer;
+import GestureRecognizer.GestureRecognizerIvy;
 import fr.dgac.ivy.IvyException;
 
 /**
@@ -19,7 +20,7 @@ public class Multimodalite {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IvyException {
-        GestureRecognizer g = new GestureRecognizer();
+        GestureRecognizerIvy g = new GestureRecognizerIvy();
         
     }
     
