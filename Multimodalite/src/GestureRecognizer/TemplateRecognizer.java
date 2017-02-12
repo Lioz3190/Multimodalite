@@ -25,24 +25,14 @@ public final class TemplateRecognizer {
         this.readTemplate("croix.txt");
         this.readTemplate("barre.txt");
     }
-    /**
-     * Gets all the recognized templates
-     * @return 
-     */
+
     public ArrayList<Template> getListeTemplates() {
         return listeTemplates;
     }
     
-    /**
-     * Reads a given template
-     * @param templatename
-     * @throws FileNotFoundException
-     * @throws IOException 
-     */
+
     public void readTemplate(String templatename) throws IOException {
-        System.out.println("Reading template " + templatename);
         BufferedReader in;
-        
         in = new BufferedReader(new FileReader("./ressources/" + templatename));
         
         String str=in.readLine();
@@ -53,15 +43,8 @@ public final class TemplateRecognizer {
         in.close();
     }
 
-    /**
-     * Creates a template file to stock with given Template and adds the given template to the list
-     * @param templatename 
-     * @param template 
-     * @throws java.io.IOException 
-     */
+
     public void writeTemplate(String templatename, Template template) throws IOException {
-        System.out.println("Writing template " + templatename);
-        
         File file = new File("ressources/" + templatename);
         
         if(!file.createNewFile()) {

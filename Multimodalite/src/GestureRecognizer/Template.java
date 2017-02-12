@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package GestureRecognizer;
 
 import java.awt.geom.Point2D;
@@ -30,17 +26,8 @@ public class Template {
         return stroke;
     }
     
-    /**
-     * return the distance between the actual stroke on the 
-     * screen and the equivalent stroke in the template
-     * @param stroke_ 
-     */
+
     public double normalization(Stroke stroke_){
-        /*double distance = 0;
-        for (int i = 0; i < this.stroke.size() ; i++){
-            distance += stroke_.getPoint(i).distance(this.stroke.getPoint(i));
-        }
-        return distance; */
         
          double dist = 0.0;
 
@@ -54,12 +41,6 @@ public class Template {
         return dist;
     }
     
-    
-    
-    /**
-     * writes in the output file the template
-     * @param outputTemplate 
-     */
     public void write(PrintWriter outputTemplate)
     {
         outputTemplate.print(name + " ");
