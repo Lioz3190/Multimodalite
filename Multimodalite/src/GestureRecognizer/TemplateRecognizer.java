@@ -33,7 +33,7 @@ public final class TemplateRecognizer {
 
     public void readTemplate(String templatename) throws IOException {
         BufferedReader in;
-        in = new BufferedReader(new FileReader("./ressources/" + templatename));
+        in = new BufferedReader(new FileReader("./gestes/" + templatename));
         
         String str=in.readLine();
         if(!str.trim().equals("")) {
@@ -45,7 +45,7 @@ public final class TemplateRecognizer {
 
 
     public void writeTemplate(String templatename, Template template) throws IOException {
-        File file = new File("ressources/" + templatename);
+        File file = new File("gestes/" + templatename);
         
         if(!file.createNewFile()) {
             throw new IOException("Couldn't create file !");

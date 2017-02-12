@@ -21,15 +21,15 @@ import multimodalite.ShapeType;
  */
 public class VocalRecognizerIvy extends Ivy {
 
-    private enum Etats {
-        IDLE, GESTURERECEIVED, CLICKED, TALKED
+    private enum State {
+        IDLE, ACTION, CLIC, VOICE
     };
 
     private enum Action {
         RECTANGLE, CIRCLE, MOVE, DELETE, IDLE
     };
     private Action action = Action.IDLE;
-    private Etats etat = Etats.IDLE;
+    private State state = State.IDLE;
     private Shape finalShape = new Shape();
     private boolean waitingForColor = false;
     private boolean waitingForPos = false;
@@ -140,32 +140,32 @@ public class VocalRecognizerIvy extends Ivy {
     }
 
     private void gestureRecognized(String name) {
-        switch (etat) {
+        switch (state) {
             case IDLE: // Wait 10sec for the rest of the command
                 timerGestureReceived = new Timer();
                 timerGestureReceived.schedule(timerGestureReceivedEventHandler(), 10000);
 
                 setAction(name);
-                etat = Etats.GESTURERECEIVED;
+                state = State.ACTION;
                 break;
-            case CLICKED:
-            case GESTURERECEIVED:
-            case TALKED:
+            case CLIC:
+            case ACTION:
+            case VOICE:
             default:
                 break;
         }
     }
 
     private void selectColor(String couleur) {
-        switch (etat) {
-            case GESTURERECEIVED:
-            case CLICKED:
-            case TALKED:
+        switch (state) {
+            case ACTION:
+            case CLIC:
+            case VOICE:
                 if (waitingForObject) {
                     currentShape.setColor(couleur);
                 } else {
                     finalShape.setColor(couleur);
-                    etat = Etats.GESTURERECEIVED;
+                    state = State.ACTION;
                 }
                 break;
             case IDLE:
@@ -174,19 +174,19 @@ public class VocalRecognizerIvy extends Ivy {
     }
 
     private void selectPosition() {
-        switch (etat) {
-            case GESTURERECEIVED:
-                etat = Etats.TALKED;
+        switch (state) {
+            case ACTION:
+                state = State.VOICE;
                 waitingForPos = true;
                 timerTalked = new Timer();
                 timerTalked.schedule(timerTalkedEventHandler(), 5000);
                 break;
-            case TALKED:
-                etat = Etats.TALKED;
+            case VOICE:
+                state = State.VOICE;
                 waitingForPos = true;
                 break;
-            case CLICKED:
-                etat = Etats.GESTURERECEIVED;
+            case CLIC:
+                state = State.ACTION;
                 finalShape.setPosition(currentShape.getPosition().x, currentShape.getPosition().y);
                 timerClicked.cancel();
                 break;
@@ -201,19 +201,19 @@ public class VocalRecognizerIvy extends Ivy {
         waitingForObject = true;
         currentShape.setType(ShapeType.getShapeType(objectType));
 
-        switch (etat) {
-            case GESTURERECEIVED:
+        switch (state) {
+            case ACTION:
                 timerTalked = new Timer();
                 timerTalked.schedule(timerTalkedEventHandler(), 5000);
 
-                etat = Etats.TALKED;
+                state = State.VOICE;
                 break;
-            case CLICKED:
-                etat = Etats.GESTURERECEIVED;
+            case CLIC:
+                state = State.ACTION;
                 selectionnerPoints();
                 break;
             case IDLE:
-            case TALKED:
+            case VOICE:
             default:
                 break;
         }
@@ -223,20 +223,20 @@ public class VocalRecognizerIvy extends Ivy {
 
         waitingForColor = true;
 
-        switch (etat) {
-            case GESTURERECEIVED:
+        switch (state) {
+            case ACTION:
                 timerTalked = new Timer();
                 timerTalked.schedule(timerTalkedEventHandler(), 5000);
 
-                etat = Etats.TALKED;
+                state = State.VOICE;
                 break;
-            case CLICKED:
-                etat = Etats.GESTURERECEIVED;
+            case CLIC:
+                state = State.ACTION;
                 selectionnerPoints();
 
                 break;
             case IDLE:
-            case TALKED:
+            case VOICE:
             default:
                 break;
         }
@@ -244,8 +244,8 @@ public class VocalRecognizerIvy extends Ivy {
 
     private void mousePressed(int x, int y) {
 
-        switch (etat) {
-            case TALKED:
+        switch (state) {
+            case VOICE:
                 if (waitingForPos) {
                     if (action == Action.MOVE) {
                         //finalShape.setPosition(x - selectedInfos.getPosition().x, y - selectedInfos.getPosition().y);                            
@@ -254,7 +254,7 @@ public class VocalRecognizerIvy extends Ivy {
                         finalShape.setPosition(x, y);
                     }
                     waitingForPos = false;
-                    etat = Etats.GESTURERECEIVED;
+                    state = State.ACTION;
                     timerTalked.cancel();
                 }
 
@@ -264,7 +264,7 @@ public class VocalRecognizerIvy extends Ivy {
                 }
 
                 break;
-            case GESTURERECEIVED:
+            case ACTION:
                 if (waitingForPos && action == action.MOVE) {
                     currentShape.setPosition(x - currentShape.getPosition().x, y - currentShape.getPosition().y);
                 } else {
@@ -273,10 +273,10 @@ public class VocalRecognizerIvy extends Ivy {
 
                 timerClicked = new Timer();
                 timerClicked.schedule(timerClickedEventHandler(), 5000);
-                etat = Etats.CLICKED;
+                state = State.CLIC;
                 break;
             case IDLE:
-            case CLICKED:
+            case CLIC:
             default:
                 break;
         }
@@ -325,15 +325,15 @@ public class VocalRecognizerIvy extends Ivy {
 
             @Override
             public void run() {
-                switch (etat) {
-                    case TALKED:
-                        etat = Etats.GESTURERECEIVED;
+                switch (state) {
+                    case VOICE:
+                        state = State.ACTION;
                         waitingForPos = false;
                         waitingForObject = false;
                         waitingForColor = false;
                         break;
-                    case CLICKED:
-                    case GESTURERECEIVED:
+                    case CLIC:
+                    case ACTION:
                     case IDLE:
                         break;
                 }
@@ -345,12 +345,12 @@ public class VocalRecognizerIvy extends Ivy {
         return new TimerTask() {
             @Override
             public void run() {
-                switch (etat) {
-                    case GESTURERECEIVED:
-                    case CLICKED:
-                    case TALKED:
+                switch (state) {
+                    case ACTION:
+                    case CLIC:
+                    case VOICE:
                         actionFinal();
-                        etat = Etats.IDLE;
+                        state = State.IDLE;
                         break;
                     case IDLE:
                     default:
@@ -366,13 +366,13 @@ public class VocalRecognizerIvy extends Ivy {
 
             @Override
             public void run() {
-                switch (etat) {
-                    case CLICKED:
-                        etat = Etats.GESTURERECEIVED;
+                switch (state) {
+                    case CLIC:
+                        state = State.ACTION;
                         currentShape = new Shape();
                         break;
-                    case TALKED:
-                    case GESTURERECEIVED:
+                    case VOICE:
+                    case ACTION:
                     case IDLE:
                         break;
                 }
@@ -408,13 +408,13 @@ public class VocalRecognizerIvy extends Ivy {
 
     public void annuler() {
         action = Action.IDLE;
-        etat = Etats.IDLE;
+        state = State.IDLE;
         timerGestureReceived.cancel();
         reset();
     }
 
     public void fini() {
-        etat = Etats.IDLE;
+        state = State.IDLE;
         actionFinal();
     }
 
