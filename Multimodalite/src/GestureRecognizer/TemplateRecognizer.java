@@ -57,7 +57,7 @@ public final class TemplateRecognizer {
         if(!file.createNewFile()) {
             throw new IOException("Couldn't create file !");
         }
-        
+        template.write(new PrintWriter(file));
         listeTemplates.add(template);
     }
 }
