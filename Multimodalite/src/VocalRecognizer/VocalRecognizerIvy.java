@@ -35,9 +35,9 @@ public class VocalRecognizerIvy extends Ivy {
     private boolean waitingForPos = false;
     private boolean waitingForObject = false;
 
-    private Timer timerGestureReceived = new Timer();
-    private Timer timerClicked = new Timer();
-    private Timer timerTalked = new Timer();
+    private Timer timerAction = new Timer();
+    private Timer timerClic = new Timer();
+    private Timer timerVoice = new Timer();
 
     private Shape currentShape = new Shape();
 
@@ -142,8 +142,8 @@ public class VocalRecognizerIvy extends Ivy {
     private void gestureRecognized(String name) {
         switch (state) {
             case IDLE: // Wait 10sec for the rest of the command
-                timerGestureReceived = new Timer();
-                timerGestureReceived.schedule(timerGestureReceivedEventHandler(), 10000);
+                timerAction = new Timer();
+                timerAction.schedule(timerActionEventHandler(), 10000);
 
                 setAction(name);
                 state = State.ACTION;
@@ -178,8 +178,8 @@ public class VocalRecognizerIvy extends Ivy {
             case ACTION:
                 state = State.VOICE;
                 waitingForPos = true;
-                timerTalked = new Timer();
-                timerTalked.schedule(timerTalkedEventHandler(), 5000);
+                timerVoice = new Timer();
+                timerVoice.schedule(timerVoiceEventHandler(), 5000);
                 break;
             case VOICE:
                 state = State.VOICE;
@@ -188,7 +188,7 @@ public class VocalRecognizerIvy extends Ivy {
             case CLIC:
                 state = State.ACTION;
                 finalShape.setPosition(currentShape.getPosition().x, currentShape.getPosition().y);
-                timerClicked.cancel();
+                timerClic.cancel();
                 break;
             case IDLE:
             default:
@@ -203,8 +203,8 @@ public class VocalRecognizerIvy extends Ivy {
 
         switch (state) {
             case ACTION:
-                timerTalked = new Timer();
-                timerTalked.schedule(timerTalkedEventHandler(), 5000);
+                timerVoice = new Timer();
+                timerVoice.schedule(timerVoiceEventHandler(), 5000);
 
                 state = State.VOICE;
                 break;
@@ -225,8 +225,8 @@ public class VocalRecognizerIvy extends Ivy {
 
         switch (state) {
             case ACTION:
-                timerTalked = new Timer();
-                timerTalked.schedule(timerTalkedEventHandler(), 5000);
+                timerVoice = new Timer();
+                timerVoice.schedule(timerVoiceEventHandler(), 5000);
 
                 state = State.VOICE;
                 break;
@@ -255,7 +255,7 @@ public class VocalRecognizerIvy extends Ivy {
                     }
                     waitingForPos = false;
                     state = State.ACTION;
-                    timerTalked.cancel();
+                    timerVoice.cancel();
                 }
 
                 if (waitingForObject || waitingForColor) {
@@ -271,8 +271,8 @@ public class VocalRecognizerIvy extends Ivy {
                     currentShape.setPosition(x, y);
                 }
 
-                timerClicked = new Timer();
-                timerClicked.schedule(timerClickedEventHandler(), 5000);
+                timerClic = new Timer();
+                timerClic.schedule(timerClickedEventHandler(), 5000);
                 state = State.CLIC;
                 break;
             case IDLE:
@@ -320,7 +320,7 @@ public class VocalRecognizerIvy extends Ivy {
         }
     }
 
-    public TimerTask timerTalkedEventHandler() {
+    public TimerTask timerVoiceEventHandler() {
         return new TimerTask() {
 
             @Override
@@ -341,7 +341,7 @@ public class VocalRecognizerIvy extends Ivy {
         };
     }
 
-    public TimerTask timerGestureReceivedEventHandler() {
+    public TimerTask timerActionEventHandler() {
         return new TimerTask() {
             @Override
             public void run() {
@@ -409,7 +409,7 @@ public class VocalRecognizerIvy extends Ivy {
     public void annuler() {
         action = Action.IDLE;
         state = State.IDLE;
-        timerGestureReceived.cancel();
+        timerAction.cancel();
         reset();
     }
 
