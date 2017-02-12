@@ -23,10 +23,11 @@ public class GestureRecognizerIvy extends Ivy{
     
     private State state;
     
-    private final TemplateRecognizer templateRecognizer = new TemplateRecognizer();
+    private final TemplateRecognizer templateRecognizer;
     
-     public GestureRecognizerIvy() throws IvyException {
+     public GestureRecognizerIvy() throws IvyException, IOException {
             super("GestureRecognizer","GestureRecognizer Ready",null);
+        this.templateRecognizer = new TemplateRecognizer();
 
             state = State.PRESS;
             /* Messages from the Palette */
@@ -40,7 +41,7 @@ public class GestureRecognizerIvy extends Ivy{
 
             this.bindMsg("^Palette:MouseReleased x=([^ ]*) y=([^ ]*)", (IvyClient client, String[] args) -> {
                 mouseReleased(args);
-                System.out.println("Release");
+                //System.out.println("Release");
             });
             
             this.start(null);
@@ -97,7 +98,7 @@ public class GestureRecognizerIvy extends Ivy{
         }
         
 
-        private void mouseReleased(String[] args) {
+        private void mouseReleased(String[] args){
             int x = Integer.valueOf(args[0]);
             int y = Integer.valueOf(args[1]);
             
@@ -110,7 +111,8 @@ public class GestureRecognizerIvy extends Ivy{
                     state = State.PRESS;
                     stroke.addPoint(new Point2D.Double(x, y));
                     stroke.normalize();
-                    envoyerMessage(""+stroke);
+                    recognizeTemplate();
+                    //writeTemplate();
                     break;
             }
             
@@ -122,6 +124,7 @@ public class GestureRecognizerIvy extends Ivy{
          * @param nom 
          */
         public void envoyerMessage(String nom) {
+            System.out.println("Message");
             try {
                 this.sendMsg("GestureRecognizer:ActionRecognized nom="+nom);
             } catch (IvyException ex) {
@@ -136,23 +139,26 @@ public class GestureRecognizerIvy extends Ivy{
         for(Template t : templateRecognizer.getListeTemplates()) {
             t.getStroke().normalize();
             
+            
             double tempdistance = 100000.;
             try {
-                tempdistance = t.normalization(this.getStroke());
+                System.out.println(t.normalization(stroke)+"");
+                tempdistance = t.normalization(stroke);
             } catch(IndexOutOfBoundsException ex) {}
             
             if(tempdistance < distance) {
-                distance = t.normalization(this.getStroke());
+                distance = t.normalization(stroke);
                 recognized = t; 
             }
         }
-
+            System.out.println(recognized.getName());
         if(!recognized.getName().equals("Recognized")) {       
             this.envoyerMessage(recognized.getName());
         }
     }
+        
     private void writeTemplate() throws IOException {
-        Template toAdd = new Template("circle", this.getStroke());
+        Template toAdd = new Template("circle", stroke);
         templateRecognizer.writeTemplate("circle.txt", toAdd);  
     }
     }

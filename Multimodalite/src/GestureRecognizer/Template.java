@@ -36,12 +36,25 @@ public class Template {
      * @param stroke_ 
      */
     public double normalization(Stroke stroke_){
-        double distance = 0;
+        /*double distance = 0;
         for (int i = 0; i < this.stroke.size() ; i++){
-            distance = stroke_.getPoint(i).distance(this.stroke.getPoint(i));
+            distance += stroke_.getPoint(i).distance(this.stroke.getPoint(i));
         }
-        return distance;      
+        return distance; */
+        
+         double dist = 0.0;
+
+        for(int i=0;i<stroke.size();i++)
+        {
+            Point2D.Double pTemplate = stroke.getPoint(i);
+            Point2D.Double p = stroke_.getPoint(i);
+            dist+=p.distance(pTemplate);
+        }
+
+        return dist;
     }
+    
+    
     
     /**
      * writes in the output file the template

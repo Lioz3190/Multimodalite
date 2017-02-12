@@ -19,6 +19,12 @@ import java.util.ArrayList;
 public final class TemplateRecognizer {
     private final ArrayList<Template> listeTemplates = new ArrayList<>();
     
+    public TemplateRecognizer() throws IOException{
+        this.readTemplate("circle.txt");
+        this.readTemplate("rectangle.txt");
+        this.readTemplate("croix.txt");
+        this.readTemplate("barre.txt");
+    }
     /**
      * Gets all the recognized templates
      * @return 
@@ -38,7 +44,11 @@ public final class TemplateRecognizer {
         BufferedReader in;
         
         in = new BufferedReader(new FileReader("./ressources/" + templatename));
-           
+        
+        String str=in.readLine();
+        if(!str.trim().equals("")) {
+           listeTemplates.add(Template.read(str));
+        }
     
         in.close();
     }
