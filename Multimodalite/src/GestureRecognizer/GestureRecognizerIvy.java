@@ -124,7 +124,6 @@ public class GestureRecognizerIvy extends Ivy{
          * @param nom 
          */
         public void envoyerMessage(String nom) {
-            System.out.println("Message");
             try {
                 this.sendMsg("GestureRecognizer:ActionRecognized nom="+nom);
             } catch (IvyException ex) {
@@ -142,7 +141,6 @@ public class GestureRecognizerIvy extends Ivy{
             
             double tempdistance = 100000.;
             try {
-                System.out.println(t.normalization(stroke)+"");
                 tempdistance = t.normalization(stroke);
             } catch(IndexOutOfBoundsException ex) {}
             
@@ -151,7 +149,6 @@ public class GestureRecognizerIvy extends Ivy{
                 recognized = t; 
             }
         }
-            System.out.println(recognized.getName());
         if(!recognized.getName().equals("Recognized")) {       
             this.envoyerMessage(recognized.getName());
         }

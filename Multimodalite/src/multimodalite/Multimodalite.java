@@ -5,9 +5,11 @@
  */
 package multimodalite;
 
-import GestureRecognizer.GestureRecognizer;
+
 import GestureRecognizer.GestureRecognizerIvy;
+import VocalRecognizer.VocalRecognizerIvy;
 import fr.dgac.ivy.IvyException;
+import java.io.IOException;
 
 /**
  *
@@ -19,8 +21,9 @@ public class Multimodalite {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IvyException {
+    public static void main(String[] args) throws IvyException, IOException {
         GestureRecognizerIvy g = new GestureRecognizerIvy();
+        VocalRecognizerIvy v = new VocalRecognizerIvy();
         
     }
     

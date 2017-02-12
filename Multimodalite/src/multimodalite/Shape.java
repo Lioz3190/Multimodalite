@@ -17,6 +17,10 @@ public class Shape {
     private Point position;
     private String color;
     private ShapeType type;
+    
+    public Shape (){
+        color = null;
+    }
 
     public String getName() {
         return name;
