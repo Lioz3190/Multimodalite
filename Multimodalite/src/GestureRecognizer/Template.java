@@ -41,12 +41,6 @@ public class Template {
         return distance;      
     }
     
-    /**
-     * Creates a template file to stock with given Template and adds the given template to the list
-     * @param templatename 
-     * @param template 
-     * @throws java.io.IOException 
-     */
     
     
     
