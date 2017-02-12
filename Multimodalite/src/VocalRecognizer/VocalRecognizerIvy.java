@@ -92,6 +92,10 @@ public class VocalRecognizerIvy extends Ivy{
              this.bindMsg("^sra5 Text=la*.", (IvyClient ic, String[] strings) -> {
                 selectionnerIci();
             });
+             
+              this.bindMsg("^sra5 Text=a cette position*.", (IvyClient ic, String[] strings) -> {
+                selectionnerIci();
+            });
             
             this.bindMsg("^sra5 Text=cet objet*.", (IvyClient ic, String[] strings) -> {
                 selectionnerObjectAt("");
@@ -105,6 +109,14 @@ public class VocalRecognizerIvy extends Ivy{
                 
             this.bindMsg("^sra5 Text=de cette couleur*.", (IvyClient ic, String[] strings) -> {
                 selectionnerCouleurAt();
+            });
+            
+            this.bindMsg("^sra5 Text=annuler*.", (IvyClient ic, String[] strings) -> {
+                annuler();
+            });
+            
+             this.bindMsg("^sra5 Text=fini*.", (IvyClient ic, String[] strings) -> {
+                fini();
             });
             this.start(null);
     }
@@ -371,19 +383,19 @@ public class VocalRecognizerIvy extends Ivy{
     public void actionFinal(){
         switch(action){
             case RECTANGLE :
-                action = action.IDLE;
+                action = Action.IDLE;
                 dessinerRectangle();
                 break;
             case CIRCLE :
-                action = action.IDLE;
+                action = Action.IDLE;
                 dessinerCercle();
                 break;
             case MOVE :
-                action = action.IDLE;
+                action = Action.IDLE;
                 move();
                 break;
             case DELETE :
-                action = action.IDLE;
+                action = Action.IDLE;
                 delete();
                 break;
             case IDLE :
@@ -392,6 +404,18 @@ public class VocalRecognizerIvy extends Ivy{
         }
         
         reset();
+    }
+    
+    public void annuler(){
+        action = Action.IDLE;
+        etat = Etats.IDLE;
+        timerGestureReceived.cancel();
+        reset();
+    }
+    
+    public void fini(){
+        etat = Etats.IDLE;
+        actionFinal();
     }
     /**
          * Draws a rectangle according to the variables
